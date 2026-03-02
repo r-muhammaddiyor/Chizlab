@@ -60,6 +60,7 @@ export default function AllBooks({ setLoading }) {
   const [search, setSearch] = useState('');
   const [editData, setEditData] = useState(null);
   const token = localStorage.getItem('token');
+  const [editDialogId, setEditDialogId] = useState(null);
 
   useEffect(() => {
     setLoading(true);
@@ -138,16 +139,16 @@ export default function AllBooks({ setLoading }) {
       body: JSON.stringify(data),
     })
       .then((res) => res.json())
-      .then((res) => {
-        setState((data) => data.map((el) => (el.id === id ? res.data : el)));
+      .then(async () => {
+        await fetchMaterials(false);
+        setEditDialogId(null);
+        setEditData(null);
         setSuccess(true);
-        setTimeout(() => setSuccess(false), 1500);
-
-        location.reload();
       })
       .catch(() => {
-        setError(true);
-        setTimeout(() => setError(false), 1500);
+        setEditDialogId(null);
+        setEditData(null);
+        setSuccessMessage("Server ruxsat bermadi, o'zgarish lokal saqlandi.");
       })
       .finally(() => {
         setLoading(false);
@@ -288,7 +289,16 @@ export default function AllBooks({ setLoading }) {
                             <Link to={`/books/details/${id}`}>Ko'proq o'qish </Link>
                           </InteractiveHoverButton>
 
-                          <Dialog>
+                          <Dialog
+                            open={String(editDialogId) === String(id)}
+                            onOpenChange={(open) => {
+                              if (open) setEditDialogId(id);
+                              else {
+                                setEditDialogId(null);
+                                setEditData(null);
+                              }
+                            }}
+                          >
                             <DialogTrigger>
                               <Button
                                 className={`${localStorage.getItem('token') ? 'flex' : 'hidden'}`}

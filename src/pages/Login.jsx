@@ -36,7 +36,16 @@ function Login() {
     })
       .then((res) => res.json())
       .then((data) => {
-        localStorage.setItem('token', data.access_token);
+        const token =
+          data?.access_token ?? data?.token ?? data?.data?.access_token ?? data?.data?.token ?? '';
+
+        if (!token) {
+          setError(true);
+          setTimeout(() => setError(false), 1500);
+          return;
+        }
+
+        localStorage.setItem('token', token);
         setSuccess(true);
 
         setTimeout(() => navigate('/'), 1500);

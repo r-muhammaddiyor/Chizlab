@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './pages/Home';
 import AllBooks from './pages/AllBooks';
@@ -7,30 +7,34 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 
 export default function App() {
-  const [loading, setLoading] = useState(false); 
+  const [loading, setLoading] = useState(false);
 
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <Home setLoading={setLoading} />,
-    },
-    {
-      path: '/books',
-      element: <AllBooks setLoading={setLoading} />,
-    },
-    {
-      path: '/books/details/:id',
-      element: <BookDetails setLoading={setLoading} />,
-    },
-    {
-      path: '/login',
-      element: <Login setLoading={setLoading} />,
-    },
-    {
-      path: '/signup',
-      element: <Register setLoading={setLoading} />,
-    },
-  ]);
+  const router = useMemo(
+    () =>
+      createBrowserRouter([
+        {
+          path: '/',
+          element: <Home setLoading={setLoading} />,
+        },
+        {
+          path: '/books',
+          element: <AllBooks setLoading={setLoading} />,
+        },
+        {
+          path: '/books/details/:id',
+          element: <BookDetails setLoading={setLoading} />,
+        },
+        {
+          path: '/login',
+          element: <Login setLoading={setLoading} />,
+        },
+        {
+          path: '/signup',
+          element: <Register setLoading={setLoading} />,
+        },
+      ]),
+    [setLoading]
+  );
 
   return (
     <>
