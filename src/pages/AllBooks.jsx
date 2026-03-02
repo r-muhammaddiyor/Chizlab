@@ -196,11 +196,13 @@ export default function AllBooks({ setLoading }) {
             />
 
             <Dialog>
-              <DialogTrigger>
-                <Button className={`${localStorage.getItem('token') ? 'flex' : 'hidden'}`}>
-                  <PlusIcon /> Qoshish
-                </Button>
-              </DialogTrigger>
+              {typeof window !== 'undefined' && localStorage.getItem('token') && (
+                <DialogTrigger>
+                  <Button>
+                    <PlusIcon /> Qoshish
+                  </Button>
+                </DialogTrigger>
+              )}
               <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Kitob qo'shish</DialogTitle>
