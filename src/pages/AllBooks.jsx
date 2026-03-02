@@ -46,6 +46,8 @@ import { Spinner } from '@/components/ui/spinner';
 import { CircleCheckIcon } from 'lucide-react';
 import { CircleAlertIcon } from 'lucide-react';
 
+import { Banner1 } from '../components/banner1';
+
 export default function AllBooks({ setLoading }) {
   const serverAction = async () => {
     // Simulate a server action
@@ -57,6 +59,7 @@ export default function AllBooks({ setLoading }) {
   const [error, setError] = useState(false);
   const [search, setSearch] = useState('');
   const [editData, setEditData] = useState(null);
+  const token = localStorage.getItem('token');
 
   useEffect(() => {
     setLoading(true);
@@ -137,9 +140,10 @@ export default function AllBooks({ setLoading }) {
       .then((res) => res.json())
       .then((res) => {
         setState((data) => data.map((el) => (el.id === id ? res.data : el)));
-
         setSuccess(true);
         setTimeout(() => setSuccess(false), 1500);
+
+        location.reload();
       })
       .catch(() => {
         setError(true);
@@ -151,11 +155,15 @@ export default function AllBooks({ setLoading }) {
   }
 
   const filteredState = state.filter((el) => {
-    return (el.title || '').toLowerCase().includes(search.toLowerCase());
+    const title = el?.title ? String(el.title).toLowerCase() : '';
+    const query = search ? String(search).toLowerCase() : '';
+    return title.includes(query);
   });
 
   return (
     <div className="container max-w-285 w-full mx-auto p-4">
+      <div className="fixed bottom-0 z-999 left-0 right-0">{!token ? <Banner1 /> : null}</div>
+
       {success && (
         <div className="fixed top-5 right-5">
           <Alert variant="success" className="mb-4 flex items-center gap-2">
@@ -188,7 +196,7 @@ export default function AllBooks({ setLoading }) {
 
             <Dialog>
               <DialogTrigger>
-                <Button>
+                <Button className={`${localStorage.getItem('token') ? 'flex' : 'hidden'}`}>
                   <PlusIcon /> Qoshish
                 </Button>
               </DialogTrigger>
@@ -242,8 +250,10 @@ export default function AllBooks({ setLoading }) {
                w-full"
           >
             {filteredState.length > 0 ? (
-              filteredState.map(
-                ({ title, publishedAt, language, summary, cover, authors, id }, index) => (
+              filteredState.map((el) => {
+                if (!el) return null;
+                const { title, publishedAt, language, summary, cover, authors, id } = el;
+                return (
                   <li className="w-full flex" key={id}>
                     <div className="grid w-full">
                       {/* Blog Card */}
@@ -281,7 +291,7 @@ export default function AllBooks({ setLoading }) {
                           <Dialog>
                             <DialogTrigger>
                               <Button
-                                className=""
+                                className={`${localStorage.getItem('token') ? 'flex' : 'hidden'}`}
                                 onClick={() =>
                                   setEditData({
                                     id,
@@ -359,8 +369,8 @@ export default function AllBooks({ setLoading }) {
                       </Card>
                     </div>
                   </li>
-                )
-              )
+                );
+              })
             ) : (
               <li className="col-span-full text-center text-gray-500 py-10">
                 Hech narsa topilmadi
@@ -368,6 +378,8 @@ export default function AllBooks({ setLoading }) {
             )}
           </ul>
         </section>
+
+        <section></section>
       </main>
 
       <Footer2 />

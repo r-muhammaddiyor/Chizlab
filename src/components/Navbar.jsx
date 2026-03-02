@@ -37,6 +37,7 @@ const defaultAuth = {
   signup: { title: "Ro'yhatdan o'tish", url: '/signup' },
 };
 
+
 const Navbar1 = ({ logo = defaultLogo, menu = defaultMenu, auth = defaultAuth, className }) => {
   return (
     <section className={cn('py-4', className)}>
@@ -54,7 +55,16 @@ const Navbar1 = ({ logo = defaultLogo, menu = defaultMenu, auth = defaultAuth, c
             </NavigationMenu>
           </div>
 
-          <div className="flex gap-2">
+          <div className={`${localStorage.getItem('token') ? 'flex' : 'hidden'}`}>
+            <Button onClick={(evt)=>{
+              localStorage.removeItem("token")
+              location.reload();
+            }}>
+              <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </Button>
+          </div>
+
+          <div className={`${localStorage.getItem('token') ? 'hidden' : 'flex gap-8'}`}>
             <Button asChild variant="outline" size="sm">
               <Link to={auth.login.url}>{auth.login.title}</Link>
             </Button>
